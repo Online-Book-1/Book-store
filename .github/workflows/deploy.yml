@@ -1,0 +1,56 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 2. Build and Push Docker Image
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # Using the GITHUB_SHA ensures every deploy has a unique version tag
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/book-store-app-auth:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/book-store-app-auth:${{ github.sha }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG2 }}" | base64 -d > ~/.kube/config
+
+      # 3. Apply Kubernetes configs
+      # This will pull the 'latest' image we just pushed
+      - name: Apply Kubernetes configs
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f services.yaml
+          
+      # 4. Force Kubernetes to pull the new image even if tag is 'latest'
+      - name: Refresh Deployment
+        run: |
+          kubectl rollout restart deployment/book-store-app-auth-deployment
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/book-store-app-auth-deployment

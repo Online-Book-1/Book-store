@@ -1,0 +1,6 @@
+.env
+secrets.yaml
+book_system/
+deployment.yaml
+services.yaml
+.github/wotkflows/deploy.yml
