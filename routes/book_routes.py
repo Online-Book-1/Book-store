@@ -22,10 +22,7 @@ def get_reader_manager(db = Depends(get_db)) -> ReaderManager:
     book_repo     = BookRepository(db)  # ← create it first!
     return ReaderManager(progress_repo, book_repo)
  
-@router.get("/")
-def root():
-    return {"status": "Connected"}
-
+ 
 
 @router.post("/book/create_book")
 def create_book(book_data: BookCreateSchema, book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
