@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     DB_DIALECT: str
     JWT_SECRET: str
     JWT_ALGORITHM: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    ACCESS_TOKEN_EXPIRE_MINUTES: str
     KAFKA_BOOTSTRAP_SERVERS: str
     REDIS_SERVERS: str
     REDIS_PORT: str
