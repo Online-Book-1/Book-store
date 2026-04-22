@@ -16,10 +16,10 @@ spec:
         image: hritik2345/book-store-app-auth:latest
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "250m"
           limits:
-            memory: "128Mi"
+            memory: "512Mi"  # ← increase from 128Mi to 512Mi
             cpu: "500m"
         ports:
         - containerPort: 8000
