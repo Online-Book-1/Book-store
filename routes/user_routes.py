@@ -50,7 +50,7 @@ def root():
 
 
 # ── STEP 1: Register → store in Redis, send OTP ──
-@router.post("/register")
+@router.post("/auth/register")
 def create_user(user_data: UserCreateSchema, user_manager: UserManager = Depends(get_user_manager)):
     try:
         existing = user_manager.get_user_by_email(user_data.email)
@@ -89,7 +89,7 @@ def create_user(user_data: UserCreateSchema, user_manager: UserManager = Depends
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 # ── RESEND OTP ──
-@router.post("/resend-otp")
+@router.post("/auth/resend-otp")
 def resend_otp(payload: ResendOtpSchema):
     # check if user data exists in Redis
     stored_json = redis_client.get(payload.email)
@@ -122,7 +122,7 @@ def resend_otp(payload: ResendOtpSchema):
     return {"message": "OTP resent successfully. Please check your email."}
 
 # ── STEP 2: Verify OTP → create user in DB ──
-@router.post("/verify-otp", response_model=UserCreateResponseSchema)
+@router.post("/auth/verify-otp", response_model=UserCreateResponseSchema)
 def verify_otp(payload: VerifyOtpSchema, user_manager: UserManager = Depends(get_user_manager)):
     # get temp data from Redis
     stored_json = redis_client.get(payload.email)
@@ -149,7 +149,7 @@ def verify_otp(payload: VerifyOtpSchema, user_manager: UserManager = Depends(get
 
 
 # ── LOGIN ──
-@router.post("/login", response_model=Token)
+@router.post("/auth/login", response_model=Token)
 def login(login_data: UserLoginSchema, user_manager: UserManager = Depends(get_user_manager)):
     try:
         token = user_manager.login(login_data.email, login_data.password)
@@ -162,7 +162,7 @@ def login(login_data: UserLoginSchema, user_manager: UserManager = Depends(get_u
 
 
 
-@router.post("/forgot_password")
+@router.post("/auth/forgot_password")
 def forgot_password(forgot_details: ForgotPasswordSchema,user_manager: UserManager = Depends(get_user_manager)):
     try:
         existing = user_manager.get_user_by_email(forgot_details.email)
@@ -203,7 +203,7 @@ def forgot_password(forgot_details: ForgotPasswordSchema,user_manager: UserManag
 
       
 
-@router.post("/forgot/verify-otp")
+@router.post("/auth/forgot/verify-otp")
 def verify_otp(payload: VerifyOtpSchema,user_manager: UserManager = Depends(get_user_manager)):
     stored_data_json = redis_client.get(payload.email)
     

@@ -27,7 +27,7 @@ def root():
     return {"status": "Connected"}
 
 
-@router.post("/create_book")
+@router.post("/book/create_book")
 def create_book(book_data: BookCreateSchema, book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
         book = book_manager.add_book(book_title=book_data.book_title, author_id=current_user.user_id)
@@ -36,7 +36,7 @@ def create_book(book_data: BookCreateSchema, book_manager: BookManager = Depends
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/create_chapter")
+@router.post("/book/create_chapter")
 def create_chapter(chapter_data: ChapterCreateSchema, book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
         chapter_id = f"CH_{datetime.now().timestamp()}"
@@ -50,7 +50,7 @@ def create_chapter(chapter_data: ChapterCreateSchema, book_manager: BookManager 
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/read")
+@router.get("/book/read")
 def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
     try:
          
@@ -60,7 +60,7 @@ def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_rea
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/readnext")
+@router.get("/book/readnext")
 def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
     try:
          
@@ -71,7 +71,7 @@ def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_man
         raise HTTPException(status_code=404, detail=str(e))
     
 
-@router.get("/getbooks")
+@router.get("/book/getbooks")
 def get_your_books(book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
          
@@ -82,7 +82,7 @@ def get_your_books(book_manager: BookManager = Depends(get_book_manager),current
         raise HTTPException(status_code=404, detail=str(e))
     
 
-@router.get("/getrecommendation")
+@router.get("/book/getrecommendation")
 def get_your_books(book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
          
