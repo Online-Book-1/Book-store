@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     KAFKA_BOOTSTRAP_SERVERS: str
     REDIS_SERVERS: str
     REDIS_PORT: str
+    REFRESH_TOKEN_SECRET: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
     

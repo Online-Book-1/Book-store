@@ -21,7 +21,29 @@ def create_token_data(token_data: TokenData):
     encoded_jwt = jwt.encode(data, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt
 
+def create_refresh_token(token_data: TokenData):
+    data = token_data.model_dump()
+    expire = datetime.now(timezone.utc) + timedelta(days=7)  # ← 7 days
+    data["exp"] = expire
+    
 
+# refresh token payload  
+    data["type"] = "refresh"
+    encoded_jwt = jwt.encode(data, settings.REFRESH_TOKEN_SECRET, algorithm=settings.JWT_ALGORITHM)
+    return encoded_jwt
+
+
+def verify_refresh_token(token: str) -> dict:
+    try:
+        return jwt.decode(
+            token,
+            settings.REFRESH_TOKEN_SECRET,
+            algorithms=[settings.JWT_ALGORITHM]
+        )
+    except jwt.ExpiredSignatureError:
+        raise PermissionError("Refresh token expired. Please login again.")
+    except jwt.JWTError:
+        raise PermissionError("Invalid refresh token")
 
 def verify_token(token: str, credentials_exception):
     """Decode and verify JWT token"""

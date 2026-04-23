@@ -13,7 +13,7 @@ import json, random
 import traceback
 import string
 import secrets
-
+from schemas.token import Token, RefreshTokenSchema
 
 router = APIRouter()
 
@@ -161,6 +161,14 @@ def login(login_data: UserLoginSchema, user_manager: UserManager = Depends(get_u
 
 
 
+@router.post("/auth/refresh", response_model=Token)
+def refresh_token(payload: RefreshTokenSchema, user_manager: UserManager = Depends(get_user_manager)):
+    try:
+        return user_manager.refresh_access_token(payload.refresh_token)
+    except PermissionError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.post("/auth/forgot_password")
 def forgot_password(forgot_details: ForgotPasswordSchema,user_manager: UserManager = Depends(get_user_manager)):

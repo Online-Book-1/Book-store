@@ -3,7 +3,7 @@ from repositories.user_repository import UserRepository
 from models.user import User
 from datetime import datetime
 from utils.hashing import get_pass_hash,verify_password
-from utils.jwt import create_token_data
+from utils.jwt import create_token_data,create_refresh_token,verify_refresh_token
 from schemas.token import TokenData
 
 class UserManager:
@@ -27,17 +27,50 @@ class UserManager:
     def save(self,user:User):
         self.user_repo.save(user)
 
-    def login(self, email: str, password: str) -> User:
+    def login(self, email: str, password: str):
         user = self.user_repo.get_user_by_email(email)
-        
+
         if not user:
             raise LookupError("User not found")
-        
-        if not verify_password(password,user.password):
+
+        if not verify_password(password, user.password):
             raise PermissionError("Invalid credentials")
+
+        token_data     = create_token_data(TokenData(email=email))
+        refresh_token  = create_refresh_token(TokenData(email=email))
+
+        return {
+            "access_token":  token_data,
+            "refresh_token": refresh_token,
+            "token_type":    "Bearer"
+        }
+    
+    def refresh_access_token(self, refresh_token: str) -> dict:
+    # verify refresh token — business logic belongs here
+        decoded = verify_refresh_token(refresh_token)
         
-        token_data=create_token_data(TokenData(email=email))
-        return {"access_token":token_data,"token_type":"Bearer"}
+        if decoded.get("type") != "refresh":
+            raise PermissionError("Invalid token type")
+        
+        email = decoded.get("email")
+        if not email:
+            raise PermissionError("Invalid token")
+
+        # check user still exists in DB
+        user = self.user_repo.get_user_by_email(email)
+        if not user:
+            raise LookupError("User not found")
+
+        # generate new access token
+        new_access_token = create_token_data(TokenData(email=email))
+
+        return {
+            "access_token":  new_access_token,
+            "refresh_token": refresh_token,
+            "token_type":    "Bearer"
+        }
+
+
     
     def get_user_by_email(self, email: str):
         return self.user_repo.get_user_by_email(email)
