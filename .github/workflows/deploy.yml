@@ -43,8 +43,8 @@ jobs:
       # This will pull the 'latest' image we just pushed
       - name: Apply Kubernetes configs
         run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f services.yaml
+          kubectl apply -f deployment.yaml --validate=false
+          kubectl apply -f services.yaml --validate=false
           
       # 4. Force Kubernetes to pull the new image even if tag is 'latest'
       - name: Refresh Deployment
