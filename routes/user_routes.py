@@ -33,8 +33,8 @@ redis_client = Redis(
 producer = KafkaProducer(
     bootstrap_servers=[settings.KAFKA_BOOTSTRAP_SERVERS],
     value_serializer=lambda x: json.dumps(x).encode('utf-8'),
-    # --- ADD THESE THREE LINES ---
-    max_block_ms=2000,           # Don't hang for more than 2 seconds
+    api_version=(0, 10, 2),
+                # Don't hang for more than 2 seconds
     request_timeout_ms=2000,     # Time to wait for a response
     metadata_max_age_ms=30000    # How often to refresh partition info
 )
