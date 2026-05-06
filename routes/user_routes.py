@@ -44,7 +44,7 @@ def get_user_manager(db=Depends(get_db)) -> UserManager:
     return UserManager(user_repo)
 
 
-@router.get("/")
+@router.get("/auth")
 def root():
     return {"status": "Connected"}
 
