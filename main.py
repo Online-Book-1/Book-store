@@ -10,12 +10,12 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],        # allow all origins in development
+    allow_origins=["http://127.0.0.1:5500",   # local dev
+                   "http://16.171.40.255"],     # production
     allow_credentials=True,
-    allow_methods=["*"],        # allow GET, POST, OPTIONS etc.
-    allow_headers=["*"],        # allow all headers including Authorization
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
 Base.metadata.create_all(bind=engine)
  
 app.include_router(book_router)
