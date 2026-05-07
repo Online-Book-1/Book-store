@@ -11,21 +11,36 @@ class ReaderManager:
         self.book_repository     = book_repo
 
     def get_current_page(self, user_id: int, book_id: int) -> str:
+    # ✅ Auto-creates progress if first time reading
         progress = self.progress_repository.get_progress(user_id, book_id)
         book     = self.book_repository.get_book_by_id(book_id)
 
+        # ✅ Check book exists
+        if not book:
+            raise LookupError("Book not found")
+
         # ✅ Check chapters exist
-        if not book.chapters:
-            raise LookupError("This book has no chapters yet")
+         
+
+        # ✅ Check chapter index is valid
+        if progress.current_chapter_index >= len(book.chapters):
+            progress.current_chapter_index = 0
+            progress.current_page_index = 0
+            self.progress_repository.save_progress(progress)
 
         chapter = book.chapters[progress.current_chapter_index]
 
-        # ✅ Check pages exist
-        if not chapter.pages:
-            raise LookupError("This chapter has no pages yet")
+         
+
+        # ✅ Check page index is valid
+        if progress.current_page_index >= len(chapter.pages):
+            progress.current_page_index = 0
+            self.progress_repository.save_progress(progress)
 
         page = chapter.pages[progress.current_page_index]
+
         return f"[{book.book_title} → {chapter.chapter_name} → Page {page.page_no}]\n{page.content}"
+
     def move_next(self, user_id: int, book_id: int):
         progress = self.progress_repository.get_progress(user_id, book_id)
         book     = self.book_repository.get_book_by_id(book_id)
