@@ -46,7 +46,14 @@ class BookManager:
             raise LookupError("No books found")
         return books
     
+    
+    def get_book_detail(self,book_id:int):
+        book=self.book_repository.get_book_by_id(book_id)
+        if not book:
+            raise LookupError("No books found")
+        return book
 
+        
 
     def get_recommended_books(self):
         all_books = self.book_repository.get_all_books()

@@ -59,6 +59,17 @@ def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_rea
         raise HTTPException(status_code=404, detail=str(e))
      
 
+@router.get("/book/get_book_detail")
+def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
+    try:
+         
+        text= reader_manager.get_book_detail(book_id=book_id)
+     
+        return text
+    # ✅ Correct
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 @router.get("/book/readnext")
 def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
     try:
