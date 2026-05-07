@@ -60,10 +60,10 @@ def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_rea
      
 
 @router.get("/book/get_book_detail")
-def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
+def show_book_detail(book_id:int,book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
          
-        text= reader_manager.get_book_detail(book_id=book_id)
+        text= book_manager.get_book_detail(book_id=book_id)
      
         return text
     # ✅ Correct
