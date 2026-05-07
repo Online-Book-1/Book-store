@@ -26,18 +26,17 @@ class BookManager:
         if not book:
             raise LookupError("Book not found")
 
-        chapter = Chapter(
-            chapter_name = chapter_name,
-            book_id      = book_id
-        )
-        saved_chapter = self.book_repository.save_chapter(chapter)  # ← get saved chapter back
+        chapter = Chapter(chapter_name=chapter_name, book_id=book_id)
+        saved_chapter = self.book_repository.save_chapter(chapter)
 
         new_pages = self.pagination_service.create_pages(text)
         for page in new_pages:
-            page.chapter_id = saved_chapter.chapter_id  # ← real integer ID from DB ✅
+            page.chapter_id = saved_chapter.chapter_id
             self.book_repository.save_page(page)
+
+        # ✅ Increment total_chapters count
         book.total_chapters = (book.total_chapters or 0) + 1
-        self.book_repository.save_book(book)
+        self.book_repository.add_book(book)
 
         return {"chapter_name": chapter_name, "pages": len(new_pages)}
     

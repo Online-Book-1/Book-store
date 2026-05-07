@@ -11,6 +11,8 @@ class BookRepository:
     def add_book(self, book: Book):
         self.db.add(book)
         self.db.commit()
+        self.db.refresh(book)
+        return book
 
     def get_book_by_id(self, book_id: int) -> Book:
         return self.db.query(Book).filter(Book.book_id == book_id).first()
@@ -23,6 +25,7 @@ class BookRepository:
         self.db.commit()
         self.db.refresh(chapter)  # ← now it works because ID is integer
         return chapter
+    
     def save_page(self, page: Page):
         self.db.add(page)
         self.db.commit()
