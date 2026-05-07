@@ -45,7 +45,7 @@ def create_chapter(chapter_data: ChapterCreateSchema, book_manager: BookManager 
 )
         return chapter
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=200, detail=str(e))
     
 @router.get("/book/read")
 def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
@@ -55,7 +55,7 @@ def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_rea
      
         return text
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=200, detail=str(e))
     
 @router.get("/book/readnext")
 def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
@@ -65,7 +65,7 @@ def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_man
      
         return text
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=200, detail=str(e))
     
 
 @router.get("/book/getbooks")
@@ -76,7 +76,7 @@ def get_your_books(book_manager: BookManager = Depends(get_book_manager),current
      
         return text
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=200, detail=str(e))
     
 
 @router.get("/book/getrecommendation")
@@ -87,4 +87,4 @@ def get_your_books(book_manager: BookManager = Depends(get_book_manager),current
      
         return text
     except LookupError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=200, detail=str(e))
