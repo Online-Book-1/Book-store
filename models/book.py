@@ -15,6 +15,6 @@ class Book(Base):
     book_id=Column(Integer,primary_key=True,autoincrement=True)
     book_title=Column(String(100),nullable=False)
     author_id=Column(Integer,ForeignKey("users.user_id"),nullable=False)
-    
+    total_chapters=Column(Integer,default=0)
     chapters = relationship("Chapter", backref="book")
      

@@ -36,6 +36,8 @@ class BookManager:
         for page in new_pages:
             page.chapter_id = saved_chapter.chapter_id  # ← real integer ID from DB ✅
             self.book_repository.save_page(page)
+        book.total_chapters = (book.total_chapters or 0) + 1
+        self.book_repository.save_book(book)
 
         return {"chapter_name": chapter_name, "pages": len(new_pages)}
     
