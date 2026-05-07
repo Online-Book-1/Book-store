@@ -14,7 +14,7 @@ class PaginationService:
             chunk    = " ".join(words[i: i + self.total_words])
             page_num = (i // self.total_words) + 1
             pages.append(Page(
-    page_id    = f"Page_{page_num}",
+    page_id    = f"{page_num}",
     page_no    = page_num,
     content    = chunk
 )) 
