@@ -21,7 +21,7 @@ class BookManager:
         self.book_repository.add_book(book)
         return book
 
-    def add_chapter(self, book_id: int, chapter_id: str, chapter_name: str, text: str):
+    def add_chapter(self, book_id: int, chapter_name: str, text: str):
         book = self.book_repository.get_book_by_id(book_id)
         if not book:
             raise LookupError("Book not found")

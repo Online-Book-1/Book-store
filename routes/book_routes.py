@@ -36,10 +36,10 @@ def create_book(book_data: BookCreateSchema, book_manager: BookManager = Depends
 @router.post("/book/create_chapter")
 def create_chapter(chapter_data: ChapterCreateSchema, book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:
-        chapter_id = f"CH_{datetime.now().timestamp()}"
+         
         chapter = book_manager.add_chapter(
     book_id=chapter_data.book_id,
-    chapter_id=chapter_id,
+     
     chapter_name=chapter_data.chapter_name,
     text=chapter_data.content
 )
@@ -70,7 +70,16 @@ def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_man
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
      
-
+@router.get("/book/readprev")
+def read_prev(book_id: int, reader_manager: ReaderManager = Depends(get_reader_manager), current_user = Depends(get_curr_user)):
+    try:
+        text = reader_manager.move_back(book_id=book_id, user_id=current_user.user_id)
+        return text
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))  # ← first page
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))  # ← book not found
+    
 @router.get("/book/getbooks")
 def get_your_books(book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
     try:

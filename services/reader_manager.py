@@ -59,3 +59,24 @@ class ReaderManager:
         
         self.progress_repository.save_progress(progress)
         return self.get_current_page(user_id, book_id)
+    
+    def move_back(self, user_id: int, book_id: int):
+        progress = self.progress_repository.get_progress(user_id, book_id)
+        book     = self.book_repository.get_book_by_id(book_id)
+
+        if not book:
+            raise LookupError("Book not found")
+
+        # ✅ Already on first page - return 400 not 404
+        if progress.current_chapter_index == 0 and progress.current_page_index == 0:
+            raise ValueError("You are already on the first page!")
+
+        if progress.current_page_index > 0:
+            progress.current_page_index -= 1
+        elif progress.current_chapter_index > 0:
+            progress.current_chapter_index -= 1
+            prev_chapter = book.chapters[progress.current_chapter_index]
+            progress.current_page_index = len(prev_chapter.pages) - 1
+
+        self.progress_repository.save_progress(progress)
+        return self.get_current_page(user_id, book_id)
