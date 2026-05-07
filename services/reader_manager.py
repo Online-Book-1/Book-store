@@ -13,10 +13,19 @@ class ReaderManager:
     def get_current_page(self, user_id: int, book_id: int) -> str:
         progress = self.progress_repository.get_progress(user_id, book_id)
         book     = self.book_repository.get_book_by_id(book_id)
-        chapter  = book.chapters[progress.current_chapter_index]
-        page     = chapter.pages[progress.current_page_index]
-        return f"[{book.book_title} → {chapter.chapter_name} → Page {page.page_no}]\n{page.content}"
 
+        # ✅ Check chapters exist
+        if not book.chapters:
+            raise LookupError("This book has no chapters yet")
+
+        chapter = book.chapters[progress.current_chapter_index]
+
+        # ✅ Check pages exist
+        if not chapter.pages:
+            raise LookupError("This chapter has no pages yet")
+
+        page = chapter.pages[progress.current_page_index]
+        return f"[{book.book_title} → {chapter.chapter_name} → Page {page.page_no}]\n{page.content}"
     def move_next(self, user_id: int, book_id: int):
         progress = self.progress_repository.get_progress(user_id, book_id)
         book     = self.book_repository.get_book_by_id(book_id)

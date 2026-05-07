@@ -54,9 +54,11 @@ def continue_reading(book_id:int,reader_manager: ReaderManager = Depends(get_rea
         text= reader_manager.get_current_page(book_id=book_id,user_id=current_user.user_id)
      
         return text
+    # ✅ Correct
     except LookupError as e:
-        raise HTTPException(status_code=200, detail=str(e))
-    
+        raise HTTPException(status_code=404, detail=str(e))
+     
+
 @router.get("/book/readnext")
 def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_manager),current_user = Depends(get_curr_user)):
     try:
@@ -64,9 +66,10 @@ def read_next(book_id:int,reader_manager: ReaderManager = Depends(get_reader_man
         text= reader_manager.move_next(book_id=book_id,user_id=current_user.user_id)
      
         return text
+    # ✅ Correct
     except LookupError as e:
-        raise HTTPException(status_code=200, detail=str(e))
-    
+        raise HTTPException(status_code=404, detail=str(e))
+     
 
 @router.get("/book/getbooks")
 def get_your_books(book_manager: BookManager = Depends(get_book_manager),current_user = Depends(get_curr_user)):
