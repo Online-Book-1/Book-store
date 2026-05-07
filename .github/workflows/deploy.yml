@@ -37,7 +37,7 @@ jobs:
       - name: Configure kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+          echo "${{ secrets.KUBE_CONFIG3 }}" | base64 -d > ~/.kube/config
 
       # 3. Apply Kubernetes configs
       # This will pull the 'latest' image we just pushed
